@@ -1,0 +1,4 @@
+{
+  "monitor_dir": "./watched",
+  "log_file": "./logs/tracelock.log"
+}

@@ -2,52 +2,37 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"time"
-
-	"github.com/fsnotify/fsnotify"
-	"github.com/sirupsen/logrus"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp: true,
-	})
+	fmt.Println("🛡️  FIMon — Digital Forensic File Integrity Tool")
+	fmt.Println("------------------------------------------------")
 
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run main.go <directory_path>")
-		return
-	}
+	cfg := LoadConfig("config.json")
 
-	path := os.Args[1]
-	watcher, err := fsnotify.NewWatcher()
+	os.MkdirAll("logs", 0755)
+	logFile, err := os.OpenFile(cfg.LogFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		logger.Fatalf("Error creating watcher: %v", err)
+		log.Fatal("Cannot open log file:", err)
 	}
-	defer watcher.Close()
+	defer logFile.Close()
+	log.SetOutput(logFile)
 
-	err = watcher.Add(path)
-	if err != nil {
-		logger.Fatalf("Error watching directory: %v", err)
-	}
+	baselineFile := "baseline.json"
 
-	logger.Infof("Monitoring directory: %s", path)
-	for {
-		select {
-		case event, ok := <-watcher.Events:
-			if !ok {
-				return
-			}
-			logger.Infof("File event: %s %s", event.Op, event.Name)
-		case err, ok := <-watcher.Errors:
-			if !ok {
-				return
-			}
-			logger.Errorf("Error: %v", err)
-		default:
-			time.Sleep(500 * time.Millisecond)
-		}
+	if _, err := os.Stat(baselineFile); os.IsNotExist(err) {
+		CreateBaseline(cfg.MonitorDir, baselineFile)
 	}
+	baseline := LoadBaseline(baselineFile)
+
+	go WatchDirectory(cfg, baseline, baselineFile)
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
+	<-done
+	fmt.Println("\n🛑 Monitoring stopped.")
 }
-

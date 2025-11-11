@@ -1,27 +1,37 @@
-
 package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"path/filepath"
 )
 
-func LoadBaseline(file string) (map[string]string, error) {
+func CreateBaseline(dir string, baselinePath string) map[string]string {
 	baseline := make(map[string]string)
-	f, err := os.Open(file)
-	if err != nil {
-		return baseline, err
-	}
-	defer f.Close()
-	err = json.NewDecoder(f).Decode(&baseline)
-	return baseline, err
+
+	filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return nil
+		}
+		baseline[path] = GetFileHash(path)
+		return nil
+	})
+
+	data, _ := json.MarshalIndent(baseline, "", "  ")
+	os.WriteFile(baselinePath, data, 0644)
+	fmt.Println("[+] Baseline created at:", baselinePath)
+	return baseline
 }
 
-func SaveBaseline(file string, baseline map[string]string) error {
-	f, err := os.Create(file)
+func LoadBaseline(baselinePath string) map[string]string {
+	baseline := make(map[string]string)
+	file, err := os.Open(baselinePath)
 	if err != nil {
-		return err
+		return baseline
 	}
-	defer f.Close()
-	return json.NewEncoder(f).Encode(baseline)
+	defer file.Close()
+
+	json.NewDecoder(file).Decode(&baseline)
+	return baseline
 }

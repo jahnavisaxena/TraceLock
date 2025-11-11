@@ -1,0 +1,14 @@
+2025/11/11 10:00:38 [🔍] Watching directory: ./watched
+2025/11/11 10:23:07 [🔍] Watching directory: ./watched
+2025/11/11 10:24:29 [ADDED] watched\sample.txt | Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+2025/11/11 10:24:29 [MODIFIED] watched\sample.txt
+  Old: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  New: 1b1834dc6289193605c3a482879a9c42f5b3b73c64d7b0bdddab0acc42c63e8d
+2025/11/11 10:25:13 [MODIFIED] watched\sample.txt
+  Old: 1b1834dc6289193605c3a482879a9c42f5b3b73c64d7b0bdddab0acc42c63e8d
+  New: 2e160609e06e299add385c5bcdc0ab4ede2c8df89ff3173e3de26de7a374811c
+2025/11/11 10:25:43 [🔍] Watching directory: ./watched
+2025/11/11 10:25:48 [MODIFIED] watched\sample.txt
+  Old: 2e160609e06e299add385c5bcdc0ab4ede2c8df89ff3173e3de26de7a374811c
+  New: 26bfd604e1c9f015c9150a4070beffa4723e978db648b5bbe816ae6c0bad3aff
+2025/11/11 11:41:54 [🔍] Watching directory: ./watched
