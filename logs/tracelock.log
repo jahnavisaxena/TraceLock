@@ -18,3 +18,15 @@
   Old: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
   New: 27c7bfb7e7b04050773d204035725bb89bc8357bc1d6255c307c6c8295a8c478
 2025/11/11 19:06:19 [DELETED] watched\text.txt
+2025/11/12 01:17:06 [⚠️] Baseline signature missing: signature missing: open baseline.json.sig: The system cannot find the file specified.
+2025/11/12 01:17:06 [🔍] Watching directory: ./watched
+2025/11/12 01:17:43 [ADDED] watched\test.txt | Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+2025/11/12 01:17:43 [MODIFIED] watched\test.txt
+  Old: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  New: 2fc8a2a3a6b91047f58e5448985e7ecc350f2cb0164090be4d3259069ea45ad7
+2025/11/12 01:19:05 [🚨] Baseline integrity verification FAILED — possible tampering detected!
+2025/11/12 01:19:05 [🔍] Watching directory: ./watched
+2025/11/12 01:21:21 [🚨] Baseline integrity verification FAILED — possible tampering detected!
+2025/11/12 01:21:21 [🔍] Watching directory: ./watched
+2025/11/12 01:21:43 [🚨] Baseline integrity verification FAILED — possible tampering detected!
+2025/11/12 01:21:43 [🔍] Watching directory: ./watched

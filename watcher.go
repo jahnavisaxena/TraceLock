@@ -18,29 +18,26 @@ type ForensicEvent struct {
 	NewHash   string `json:"new_hash,omitempty"`
 }
 
-// SaveForensicEvent appends a new event to forensic_log.json
+// SaveForensicEvent appends forensic events to reports/forensic_log.json
 func SaveForensicEvent(event ForensicEvent) {
 	reportDir := "reports"
 	reportFile := reportDir + "/forensic_log.json"
-
 	os.MkdirAll(reportDir, 0755)
 
 	var events []ForensicEvent
-
-	// Load existing events if the file exists
 	if data, err := os.ReadFile(reportFile); err == nil && len(data) > 0 {
 		_ = json.Unmarshal(data, &events)
 	}
 
-	// Append new event
 	events = append(events, event)
-
-	// Write back
 	data, _ := json.MarshalIndent(events, "", "  ")
 	os.WriteFile(reportFile, data, 0644)
+
+	// 🔐 Update integrity signature
+	SaveSignature(reportFile)
 }
 
-// WatchDirectory monitors and logs file integrity events
+// WatchDirectory monitors directory changes and updates logs/baseline
 func WatchDirectory(cfg Config, baseline map[string]string, baselineFile string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -65,6 +62,7 @@ func WatchDirectory(cfg Config, baseline map[string]string, baselineFile string)
 				baseline[path] = hash
 				log.Printf("[ADDED] %s | Hash: %s\n", path, hash)
 				SaveBaseline(baseline, baselineFile)
+				SaveSignature(baselineFile)
 
 				SaveForensicEvent(ForensicEvent{
 					Timestamp: time.Now().Format(time.RFC3339),
@@ -81,6 +79,7 @@ func WatchDirectory(cfg Config, baseline map[string]string, baselineFile string)
 					log.Printf("[MODIFIED] %s\n  Old: %s\n  New: %s\n", path, oldHash, newHash)
 					baseline[path] = newHash
 					SaveBaseline(baseline, baselineFile)
+					SaveSignature(baselineFile)
 
 					SaveForensicEvent(ForensicEvent{
 						Timestamp: time.Now().Format(time.RFC3339),
@@ -97,6 +96,7 @@ func WatchDirectory(cfg Config, baseline map[string]string, baselineFile string)
 				oldHash := baseline[path]
 				delete(baseline, path)
 				SaveBaseline(baseline, baselineFile)
+				SaveSignature(baselineFile)
 
 				SaveForensicEvent(ForensicEvent{
 					Timestamp: time.Now().Format(time.RFC3339),
